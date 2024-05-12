@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Url Shortener</title>
+
+    <style>
+        :root {
+            color-scheme: light dark;
+            color: #ffffffde;
+        }
+
+        body {
+            font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+            font-weight: 600;
+        }
+
+        .container {
+            position: absolute;
+            top: 0;
+            bottom: 5%;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 0 15px;
+        }
+
+        .title {
+            font-size: 40px;
+            text-transform: uppercase;
+            padding-bottom: 0 !important;
+            margin: 0;
+        }
+
+        span {
+            font-size: 40px;
+            text-transform: uppercase;
+            color: rgb(198, 25, 255);
+            padding-bottom: 0 !important;
+        }
+
+        input {
+            display: flex;
+            flex-direction: column;
+            border: 2px solid hsl(0, 0%, 100%);
+            border-radius: 10px;
+            padding: 10px 25px;
+            background: transparent;
+            max-width: fit-content;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 0 auto;
+            margin-bottom: 10px;
+            margin-top: 5px;
+        }
+
+        input:active {
+            box-shadow: 2px 2px 15px #ffffffb7 inset;
+        }
+
+        input::placeholder {
+            color: #ffffffb7;
+            font-weight: 600;
+        }
+
+        button {
+            width: 120px;
+            height: 30px;
+            display: flex;
+            color: #ffffff;
+            align-items: center;
+            justify-content: center;
+            background-color: rgb(198, 25, 255);
+            border: none;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: rgb(255, 0, 0);
+            font-size: 20px;
+        }
+
+        .short_url {
+            text-transform: none;
+            font-size: 20px;
+        }
+
+        a {
+            font-size: 20px;
+            color: rgb(198, 25, 255);
+        }
+
+        @media (max-width: 768px) {
+
+            input {
+                margin: 2% auto;
+            }
+
+            button {
+                margin: 20px auto;
+            }
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <form action="{% url 'home' %}" method="post">
+            {% csrf_token %}
+
+            <h2 class="title">URL SHORTENER</h2><span>By zlcosio21</span></h2>
+            <input type="text" name="complete_url" placeholder="Put Your Complete Url" required>
+
+            <button type="submit">Create Short Url</button>
+
+            {% if url %}
+                <span class="short_url">Your short url is&nbsp;</span>
+                <a href="{% url 'redirect' url.short_url %}">
+                    {{url.short_url}}
+                </a>
+            {% endif %}
+
+            {% for message in messages %}
+                <p>{{message}}</p>
+            {% endfor %}
+
+        </form>
+
+    </div>
+
+</body>
+
+</html>
