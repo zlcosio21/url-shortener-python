@@ -20,7 +20,7 @@ def home(request):
 
 
 def redirect_url(request, short_url):
-    if UrlShortener.invalid_url(request, short_url):
+    if UrlShortener.invalid_short_url(short_url):
         raise Http404("The Short Url is Invalid")
 
     url = UrlShortener.objects.get(short_url=short_url)
