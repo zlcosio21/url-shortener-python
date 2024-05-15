@@ -1,8 +1,9 @@
-from django.db import models
 from django.contrib import messages
+from django.db import models
+import validators
 import random
 import string
-import validators
+
 
 # Create your models here.
 class UrlShortener(models.Model):
@@ -15,29 +16,43 @@ class UrlShortener(models.Model):
         self.visits = self.visits + 1
         self.save()
 
-    def shorten_url():
+    @staticmethod
+    def random_characters():
         letters = string.ascii_lowercase + string.ascii_uppercase + string.digits
         short_url = ''.join(random.choice(letters) for letter in range(5))
 
-        if UrlShortener.objects.filter(short_url=short_url).exists():
-            short_url = ''.join(random.choice(letters) for letter in range(5))
+        return short_url
+
+    @classmethod
+    def shorten_url(cls):
+        short_url = cls.random_characters()
+
+        if cls.invalid_short_url(short_url):
+            short_url = cls.random_characters()
 
         return short_url
 
-    def complete_url_errors(request, complete_url):
-        complete_url_exist = UrlShortener.objects.filter(complete_url=complete_url).exists()
-        complete_url_invalid = not validators.url(complete_url)
+    @classmethod
+    def complete_url_exist(cls, complete_url):
+        return cls.objects.filter(complete_url=complete_url).exists()
 
-        if complete_url_exist:
+    @staticmethod
+    def invalid_complete_url(complete_url):
+        return not validators.url(complete_url)
+
+    @classmethod
+    def complete_url_errors(cls, request, complete_url):
+        if cls.complete_url_exist(complete_url):
             messages.error(request, "The Url Already Exist", extra_tags="complete_url_exist")
 
-        if complete_url_invalid:
+        if cls.invalid_complete_url(complete_url):
             messages.error(request, "The Url Is Invalid", extra_tags="complete_url_invalid")
 
-        return complete_url_exist or complete_url_invalid
+        return cls.complete_url_exist(complete_url) or cls.invalid_complete_url(complete_url)
 
-    def invalid_url(request, short_url):
-        return not UrlShortener.objects.filter(short_url=short_url).exists()
+    @classmethod
+    def invalid_short_url(cls, short_url):
+        return not cls.objects.filter(short_url=short_url).exists()
 
     def __str__(self):
         return f"Complete: {self.complete_url} - Short: {self.short_url}"
